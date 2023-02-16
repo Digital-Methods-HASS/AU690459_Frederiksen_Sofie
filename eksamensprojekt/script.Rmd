@@ -1,0 +1,128 @@
+---
+title: "American Bombings 1943-1945"
+author: "Sofie Frederiksen"
+date: "2023-02-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Libraries
+The first thing to do is to activate the libraries used in the codingprocess. If it libraries that hasn't been used before they have to be installed.
+
+```{r libraries used}
+library(tidyverse)
+library(leaflet)
+library(mapproj)
+library(maps)
+library(dplyr)
+library(crosstalk)
+```
+
+#Data used
+Then the data used in coding process is loaded into RStudio, so that RStudion can access it.
+Here it is worth noticing that I filter out the NA or no answer responses in my longitude and latitude columns so i only use the fields where there is an actual number
+
+```{r data used}
+b_data <- read_csv2("./data/data-til-openrefine-csv.csv")
+head(b_data)
+tail(b_data)
+which(is.na(b_data$`Target Latitude`))
+b_data<-b_data %>% 
+  filter(!is.na(`Target_Longitude`)) %>% 
+  filter(!is.na(`Target_Latitude`))
+```
+
+Here I make a smaller dataset than the 1000 rows and slice it into 250 rows so it is easier for me to see my mistakes. This trick was shown to me by Adela Sobotkova
+
+```{r}
+b_data_small<-b_data %>% 
+  slice(1:250)
+```
+
+I had some issues with RStudion not reading my longitude and latitude values as numbers and using this code shown to me by Helene,I turn the numbers into numerical values
+```{r}
+b_data <- transform(b_data, Target_Longitude = as.numeric(Target_Longitude))
+b_data <- transform(b_data, Target_Latitude = as.numeric(Target_Latitude))
+```
+
+#Creating the maps
+Here I load all of the things that makes the map
+
+```{r}
+esri <- grep("^Esri", providers, value = TRUE)
+
+
+leaflet() %>%                                 # create a map widget by calling the library
+  addProviderTiles("Esri.WorldPhysical")  # add Esri World Physical map tiles
+
+kort_1<-leaflet() %>%
+  addTiles() %>%                              # add default OpenStreetMap map tiles
+  addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
+                   options = providerTileOptions(opacity=0.5))   # make the Esri tile transparent
+ leaflet() %>% 
+  addTiles() %>% 
+  setView( lng = 2.34, lat = 48.85, zoom = 5 ) %>%  # let's use setView to navigate to our area
+  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>% 
+  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>% 
+  addProviderTiles("MtbMap", group = "Geo")
+
+
+
+```
+
+```{r}
+kort_2 <- kort_1 %>%
+  addLayersControl(baseGroups = names(esri),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  addMiniMap(tiles = esri[[1]], toggleDisplay = TRUE,
+             position = "bottomright") %>%
+  addMeasure(
+    position = "bottomleft",
+    primaryLengthUnit = "meters",
+    primaryAreaUnit = "sqmeters",
+    activeColor = "#3D535D",
+    completedColor = "#7D4479") %>% 
+  htmlwidgets::onRender("
+                        function(el, x) {
+                        var myMap = this;
+                        myMap.on('baselayerchange',
+                        function (e) {
+                        myMap.minimap.changeLayer(L.tileLayer.provider(e.name));
+                        })
+                        }") %>% 
+addControl("", position = "topright")
+```
+
+Here i put the actual data into the map, with markers for where the bombings took place, as well as pop ups that note when the bombings happened and what they targeted. I created it as separate map since i couldn't work out how to put that in the map with the slider
+```{r}
+kort_2<-leaflet() %>%                                 
+  addProviderTiles("Esri.WorldPhysical") %>%
+  addAwesomeMarkers (lng = b_data$Target_Longitude,      
+                     lat = b_data$Target_Latitude,
+                     popup = paste(b_data$target_city,'<br>', b_data$Target.Type, '<br>' , b_data$Mission_Day, b_data$Mission_Day, b_data$Mission_Year),
+             clusterOptions = markerClusterOptions())
+
+kort_2
+
+
+```
+
+
+#Sliders
+I then went on to create the map with the sliders. I had help with the coding from Helene who got it from Asmus using this link https://stackoverflow.com/questions/62849300/r-leaflet-add-a-range-slider-to-filter-markers-without-shiny
+
+```{r maak shared data object}
+shared_data <- SharedData$new(b_data)
+```
+
+Here i put in the variable for the sliders, it is worth noting that there is no slider in the RMarkdown file only in the knitted HTML
+```{r genereer output}
+filter_slider("b_data$Mission_Year", "Mission_Month", shared_data, ~b_data$Mission_Year, width = "100%")
+  leaflet(shared_data, width = "100%", height = 800) %>%
+  leaflet::addTiles() %>%
+  leaflet::addMarkers(lng = ~Target_Longitude, lat = ~Target_Latitude)
+```
+
+
