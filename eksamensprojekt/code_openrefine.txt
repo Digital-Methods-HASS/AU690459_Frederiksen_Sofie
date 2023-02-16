@@ -1,0 +1,159 @@
+In openrefine I changed some minor things so that they could be tracked, what I changed was for spaces to be underscores, and to separate the dates into three colums of day, month and year. 
+[
+  {
+    "op": "core/column-reorder",
+    "columnNames": [
+      "Mission ID",
+      "Mission_Date",
+      "Target Longitude",
+      "Target Latitude",
+      "Target Country",
+      "Target City",
+      "Theater of Operations",
+      "Country",
+      "Air Force",
+      "Unit ID",
+      "Aircraft Series",
+      "Callsign",
+      "Mission Type",
+      "Takeoff Base",
+      "Takeoff Location",
+      "Takeoff Latitude",
+      "Takeoff Longitude",
+      "Target ID",
+      "Target Type",
+      "Target Industry",
+      "Target Priority",
+      "Altitude (Hundreds of Feet)",
+      "Airborne Aircraft",
+      "Attacking Aircraft",
+      "Bombing Aircraft",
+      "Aircraft Returned",
+      "Aircraft Failed",
+      "Aircraft Damaged",
+      "Aircraft Lost",
+      "High Explosives",
+      "High Explosives Type",
+      "High Explosives Weight (Pounds)",
+      "High Explosives Weight (Tons)",
+      "Incendiary Devices",
+      "Incendiary Devices Type",
+      "Incendiary Devices Weight (Pounds)",
+      "Incendiary Devices Weight (Tons)",
+      "Fragmentation Devices",
+      "Fragmentation Devices Type",
+      "Fragmentation Devices Weight (Pounds)",
+      "Fragmentation Devices Weight (Tons)",
+      "Total Weight (Pounds)",
+      "Total Weight (Tons)",
+      "Time Over Target",
+      "Bomb Damage Assessment",
+      "Source ID;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Mission ID;Mission_Date;Theater of Operations;Country;Air Force;Unit ID;Aircraft Series;Callsign;Mission Type;Takeoff Base;Takeoff Location;Takeoff Latitude;Takeoff Longitude;Target ID;Target Country;Target City;Target Type;Target Industry;Target Priority;Target Latitude;Target Longitude;Altitude (Hundreds of Feet);Airborne Aircraft;Attacking Aircraft;Bombing Aircraft;Aircraft Returned;Aircraft Failed;Aircraft Damaged;Aircraft Lost;High Explosives;High Explosives Type;High Explosives Weight (Pounds);High Explosives Weight (Tons);Incendiary Devices;Incendiary Devices Type;Incendiary Devices Weight (Pounds);Incendiary Devices Weight (Tons);Fragmentation Devices;Fragmentation Devices Type;Fragmentation Devices Weight (Pounds);Fragmentation Devices Weight (Tons);Total Weight (Pounds);Total Weight (Tons);Time Over Target;Bomb Damage Assessment;Source ID",
+      "Column 47",
+      "Column 48",
+      "Column 49",
+      "Column 50",
+      "Column 51",
+      "Column 52",
+      "Column 53",
+      "Column 54",
+      "Column 55",
+      "Column 56",
+      "Column 57",
+      "Column 58",
+      "Column 59",
+      "Column 60",
+      "Column 61"
+    ],
+    "description": "Reorder columns"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Mission ID",
+    "newColumnName": "Mission_ID",
+    "description": "Rename column Mission ID to Mission_ID"
+  },
+  {
+    "op": "core/column-split",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "Mission_Date",
+    "guessCellType": true,
+    "removeOriginalColumn": true,
+    "mode": "separator",
+    "separator": "/",
+    "regex": false,
+    "maxColumns": 0,
+    "description": "Split column Mission_Date by separator"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Mission_Date 1",
+    "newColumnName": "Mission_Month",
+    "description": "Rename column Mission_Date 1 to Mission_Month"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Mission_Date 2",
+    "newColumnName": "Mission_Day",
+    "description": "Rename column Mission_Date 2 to Mission_Day"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Mission_Date 3",
+    "newColumnName": "Mission_Year",
+    "description": "Rename column Mission_Date 3 to Mission_Year"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Target Longitude",
+    "newColumnName": "Target_Longitude",
+    "description": "Rename column Target Longitude to Target_Longitude"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Target Latitude",
+    "newColumnName": "Target_Latitude",
+    "description": "Rename column Target Latitude to Target_Latitude"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Target Country",
+    "newColumnName": "Target_Country",
+    "description": "Rename column Target Country to Target_Country"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "Target_Country",
+    "expression": "grel:value.replace(\" \",\"_\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column Target_Country using expression grel:value.replace(\" \",\"_\")"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Target City",
+    "newColumnName": "Target_City",
+    "description": "Rename column Target City to Target_City"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "Target_City",
+    "expression": "grel:value.replace(\" \",\"_\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column Target_City using expression grel:value.replace(\" \",\"_\")"
+  }
+]
